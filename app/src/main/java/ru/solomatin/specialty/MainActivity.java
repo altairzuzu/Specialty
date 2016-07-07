@@ -17,13 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,25 +38,26 @@ public class MainActivity extends AppCompatActivity implements
     private SpecialtyFragment specialtyFragment;
     public List<Person> personList;
     public List<Specialty> specialtyList;
-    private SpecialtyListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Listen for changes in the back stack
+        // Отслеживаем изменения стэка возврата
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-        //Handle when activity is recreated like on orientation Change
         shouldDisplayHomeUp();
 
         FragmentManager fm = getSupportFragmentManager();
         specialtyFragment =
                 (SpecialtyFragment) fm.findFragmentByTag(SpecialtyFragment.TAG);
         if (specialtyFragment == null) {
-            specialtyList = new ArrayList<Specialty>();
-            personList = new ArrayList<Person>();
+            // Если фрагмент Спецальностей не создан,
+            // инициализируем списки Спец-тей и Работников
+            specialtyList = new ArrayList<>();
+            personList = new ArrayList<>();
 
+            // Создаем фрагмент Специальностей
             specialtyFragment = new SpecialtyFragment();
             android.support.v4.app.FragmentTransaction fr = fm.beginTransaction();
             fr.replace(R.id.content_frame,specialtyFragment,SpecialtyFragment.TAG);
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
 
             pDialog = new ProgressDialog(this);
             // Показываем прогресс-диалог
-            pDialog.setMessage("Loading...");
+            pDialog.setMessage(getResources().getString(R.string.loading));
             pDialog.show();
 
             // Создаем Volley-запрос
@@ -89,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     hidePDialog();
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.no_connection_message),
+                            Toast.LENGTH_LONG)
+                            .show();
                 }
             });
             // Добавляем запрос к очереди запросов Volley
@@ -98,12 +101,11 @@ public class MainActivity extends AppCompatActivity implements
             specialtyList = specialtyFragment.getSpecialtyList();
             personList = specialtyFragment.getPersonList();
         }
-
     }
 
     /**
      * Парсинг полученного JSONObject
-     * @param response
+     * @param response Json объект полученный Volley
      * @throws JSONException
      */
     private void parseResponce(JSONObject response) throws JSONException {
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements
                 JSONObject obj = responseArray.getJSONObject(i);
                 Person person = new Person();
 
+                // Имя
                 if(!obj.isNull("f_name")) {
                     String f_name = obj.getString("f_name");
                     String st="";
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements
                     person.setF_name("");
                 }
 
+                // Фамилия
                 if(!obj.isNull("l_name")) {
                     String l_name = obj.getString("l_name");
                     String st="";
@@ -142,12 +146,14 @@ public class MainActivity extends AppCompatActivity implements
                     person.setL_name("");
                 }
 
+                // URL фотографии работника
                 if(!obj.isNull("avatr_url")) {
                     person.setAvatr_url(obj.getString("avatr_url"));
                 } else {
                     person.setAvatr_url("");
                 }
 
+                // День рождения
                 if(!obj.isNull("birthday")) {
                     String birthdayString = obj.getString("birthday");
                     boolean formattable = false;
@@ -185,8 +191,9 @@ public class MainActivity extends AppCompatActivity implements
                     person.setBirthday("-");
                 }
 
+                // Специальность
                 JSONArray specialtyArray = obj.getJSONArray("specialty");
-                ArrayList<Specialty> specialties = new ArrayList<Specialty>();
+                ArrayList<Specialty> specialties = new ArrayList<>();
                 for (int j = 0; j < specialtyArray.length(); j++) {
                     JSONObject specialty = specialtyArray.getJSONObject(j);
                     Specialty sp = new Specialty();
@@ -201,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 person.setSpecialty(specialties);
 
-                // Добавляем работника к списку работников
+                // Добавляем работника к общему списку работников
                 personList.add(person);
 
             } catch (JSONException e) {
@@ -213,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Рассчитывает возраст
      * @param birthday Дата рождения
-     * @return
+     * @return Возраст(лет)
      */
     public int countAge(Date birthday) {
         Calendar dob = Calendar.getInstance();
@@ -228,13 +235,17 @@ public class MainActivity extends AppCompatActivity implements
 
     public void changeFragment(int position) {
         FragmentManager fm = getSupportFragmentManager();
-        Fragment frag = (Fragment) fm.findFragmentById(R.id.content_frame);
+        Fragment frag = fm.findFragmentById(R.id.content_frame);
         android.support.v4.app.FragmentTransaction fr = fm.beginTransaction();
         if (frag instanceof SpecialtyFragment) {
+            // Открываем фрагмент с работниками и передаем ему список работников
+            // с выбранной специальностью
             PersonFragment fragment = new PersonFragment();
             fragment.setSpecialty(specialtyList.get(position));
             fr.replace(R.id.content_frame,fragment,PersonFragment.TAG);
         } else {
+            // Открываем фрагмент с информацией о работнике и передаем ему
+            // объект Person этого работника
             DetailFragment fragment = new DetailFragment();
             fragment.setPerson(((PersonFragment) frag).getPersonList().get(position));
             fr.replace(R.id.content_frame,fragment,DetailFragment.TAG);
@@ -265,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onDestroy() {
         super.onDestroy();
         hidePDialog();
+        // Сохраняем во фрагменте списки Спец-тей и Работников
         specialtyFragment.setSpecialtyList(specialtyList);
         specialtyFragment.setPersonList(personList);
     }
@@ -276,14 +288,4 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Проверка включения Интернет-соединения
-     * @return
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 }

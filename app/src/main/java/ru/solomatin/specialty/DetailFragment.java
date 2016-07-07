@@ -45,6 +45,7 @@ public class DetailFragment extends Fragment {
             imageLoader = AppController.getInstance().getImageLoader();
         NetworkImageView thumbNail = (NetworkImageView) view
                 .findViewById(R.id.thumbnail);
+        // Пока не удалось загрузить фотографию работника - черный квадрат
         thumbNail.setDefaultImageResId(R.drawable.empty_image);
         thumbNail.setErrorImageResId(R.drawable.empty_image);
         TextView f_name = (TextView) view.findViewById(R.id.f_name);

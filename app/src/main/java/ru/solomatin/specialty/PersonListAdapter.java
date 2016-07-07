@@ -56,6 +56,7 @@ public class PersonListAdapter extends BaseAdapter {
             imageLoader = AppController.getInstance().getImageLoader();
         NetworkImageView thumbNail = (NetworkImageView) convertView
                 .findViewById(R.id.thumbnail);
+        // Пока не удалось загрузить фотографию работника - черный квадрат
         thumbNail.setDefaultImageResId(R.drawable.empty_image);
         thumbNail.setErrorImageResId(R.drawable.empty_image);
         TextView f_name = (TextView) convertView.findViewById(R.id.f_name);

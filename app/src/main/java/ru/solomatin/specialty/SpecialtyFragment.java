@@ -2,15 +2,10 @@ package ru.solomatin.specialty;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.solomatin.specialty.Model.Person;
@@ -45,7 +40,7 @@ public class SpecialtyFragment extends ListFragment {
         adapter = new SpecialtyListAdapter(getActivity(),
                 listener.specialtyList);
         setListAdapter(adapter);
-        listener.setTitle(getResources().getString(R.string.app_name));
+        listener.setTitle(getResources().getString(R.string.specialty_title));
     }
 
     @Override

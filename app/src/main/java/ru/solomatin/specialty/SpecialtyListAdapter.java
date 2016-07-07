@@ -53,8 +53,8 @@ public class SpecialtyListAdapter extends BaseAdapter {
         TextView name = (TextView) convertView.findViewById(R.id.name);
 
         Specialty m = specialtyItems.get(position);
-
-        name.setText(String.valueOf(m.getSpecialty_id())+" "+m.getName());
+        String nameStr = String.valueOf(m.getSpecialty_id())+" "+m.getName();
+        name.setText(nameStr);
 
         return convertView;
     }

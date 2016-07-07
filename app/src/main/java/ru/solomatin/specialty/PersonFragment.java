@@ -38,7 +38,9 @@ public class PersonFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        personList = new ArrayList<Person>();
+        personList = new ArrayList<>();
+        // Отбираем из общего списка Работников только тех,
+        // у кого нужная специальность
         for (Person p : listener.personList) {
             if (p.getSpecialty().contains(specialty)) {
                 personList.add(p);

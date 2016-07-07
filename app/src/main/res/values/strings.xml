@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">Специальности</string>
+    <string name="app_name">Specialty</string>
+    <string name="specialty_title">Специальности</string>
     <string name="f_name_label">Имя</string>
     <string name="l_name_label">Фамилия</string>
     <string name="age_label">Возраст</string>
     <string name="birthday_label">Дата рождения</string>
     <string name="specialty_label">Специальность</string>
-
+    <string name="no_connection_message">Нет соединения</string>
+    <string name="loading">Загрузка&#8230;</string>
 </resources>
