@@ -238,8 +238,8 @@ public class MainActivity extends AppCompatActivity implements
         Fragment frag = fm.findFragmentById(R.id.content_frame);
         android.support.v4.app.FragmentTransaction fr = fm.beginTransaction();
         if (frag instanceof SpecialtyFragment) {
-            // Открываем фрагмент с работниками и передаем ему список работников
-            // с выбранной специальностью
+            // Открываем фрагмент с работниками и передаем ему
+            // выбранную специальность
             PersonFragment fragment = new PersonFragment();
             fragment.setSpecialty(specialtyList.get(position));
             fr.replace(R.id.content_frame,fragment,PersonFragment.TAG);
