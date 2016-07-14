@@ -1,6 +1,7 @@
 package ru.solomatin.specialty.Dependencies;
 
 import android.app.Application;
+import android.support.v4.util.LruCache;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +17,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.solomatin.specialty.Model.Person;
 import ru.solomatin.specialty.Model.PersonDeserializer;
+import ru.solomatin.specialty.Network.NetworkApi;
+import rx.Observable;
 
 @Module
 public class NetworkModule {
@@ -63,5 +66,17 @@ public class NetworkModule {
         return retrofit;
     }
 
+    @Provides
+    @Singleton
+    NetworkApi provideNetworkService(Retrofit retrofit) {
+        return retrofit.create(NetworkApi.class);
+    }
+
+    @Provides
+    @Singleton
+    LruCache<Class<?>, Observable<?>> provideLruCache() {
+        int lruCacheSize = 1024 * 1024;
+        return new LruCache<>(lruCacheSize);
+    }
 
 }

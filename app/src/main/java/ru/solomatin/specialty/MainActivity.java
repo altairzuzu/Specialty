@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements
     private SpecialtyFragment specialtyFragment;
     public List<Person> personList = new ArrayList<>();
     public List<Specialty> specialtyList = new ArrayList<>();
-    private NetworkService service;
     private Presenter presenter;
 
     @Override
@@ -33,10 +32,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //((RxApplication)getApplication()).getNetworkComponent().inject(this);
-        service = ((RxApplication)getApplication()).getNetworkService();
-        presenter = new Presenter(this, service);
-        //presenter = new Presenter(this);
+        presenter = new Presenter(this);
 
         // Отслеживаем изменения стэка возврата
         getSupportFragmentManager().addOnBackStackChangedListener(this);

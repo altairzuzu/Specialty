@@ -1,11 +1,16 @@
 package ru.solomatin.specialty;
 
+import android.support.v4.util.LruCache;
+
 import javax.inject.Inject;
 
 import ru.solomatin.specialty.Model.ApiResponse;
+import ru.solomatin.specialty.Network.NetworkApi;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Presenter
@@ -14,26 +19,21 @@ import rx.Subscription;
 public class Presenter {
 
     private MainActivity view;
-    private NetworkService networkService;
     private Subscription subscription;
+    @Inject NetworkApi networkService;
+    @Inject LruCache<Class<?>, Observable<?>> cacheObservables;
 
 //    @Inject
-    public Presenter(MainActivity view, NetworkService networkService){
+    public Presenter(MainActivity view){
         this.view = view;
-        this.networkService = networkService;
+        ((RxApplication) view.getApplication()).getNetworkComponent().inject(this);
     }
-
-//    public Presenter(MainActivity view){
-//        this.view = view;
-//
-//        //this.networkService = networkService;
-//    }
 
     public void loadRxData(){
         view.showRxInProcess();
         // Подготавливаем Observable к подписке либо извлекаем из кэша
         Observable<ApiResponse> apiResponseObservable = (Observable<ApiResponse>)
-                networkService.getPreparedObservable(networkService.getAPI().getPersonsObservable(),
+                getPreparedObservable(networkService.getPersonsObservable(),
                         ApiResponse.class);
         subscription = apiResponseObservable.subscribe(new Observer<ApiResponse>() {
             @Override
@@ -56,6 +56,26 @@ public class Presenter {
     public void rxUnSubscribe(){
         if(subscription!=null && !subscription.isUnsubscribed())
             subscription.unsubscribe();
+    }
+
+    /**
+     * Возвращает кэшированный Observable или подготавлвиает новый
+     *
+     * @param unPreparedObservable Неподготовленный Observable
+     * @param clazz Используется, как ключ в LruCache
+     * @return Observable, подготовленная для подписки
+     */
+    public Observable<?> getPreparedObservable(Observable<?> unPreparedObservable, Class<?> clazz) {
+        Observable<?> preparedObservable = cacheObservables.get(clazz);
+        if (preparedObservable != null) {
+            return preparedObservable;
+        }
+        preparedObservable = unPreparedObservable
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .cache();
+        cacheObservables.put(clazz, preparedObservable);
+        return preparedObservable;
     }
 
 }

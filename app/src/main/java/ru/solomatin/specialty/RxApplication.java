@@ -12,14 +12,11 @@ import ru.solomatin.specialty.Dependencies.NetworkModule;
  */
 public class RxApplication extends Application {
 
-    private NetworkService networkService;
     private NetworkComponent networkComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        networkService = new NetworkService();
-
         networkComponent = DaggerNetworkComponent.builder()
                 .appModule(new AppModule(this))
                 //.networkModule(new NetworkModule("http://65apps.com"))
@@ -27,9 +24,6 @@ public class RxApplication extends Application {
                 .build();
     }
 
-    public NetworkService getNetworkService(){
-        return networkService;
-    }
     public NetworkComponent getNetworkComponent() {
         return networkComponent;
     }
