@@ -6,12 +6,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 
 import ru.solomatin.specialty.Model.Person;
 import ru.solomatin.specialty.Model.Specialty;
@@ -24,7 +29,13 @@ public class DetailFragment extends Fragment {
     public static final String TAG = "DetailFragment";
     private MainActivity listener;
     private Person person;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    @BindView(R.id.f_name) TextView f_name;
+    @BindView(R.id.l_name) TextView l_name;
+    @BindView(R.id.thumbnail) ImageView thumbnail;
+    @BindView(R.id.age) TextView age;
+    @BindView(R.id.birthday) TextView birthday;
+    @BindView(R.id.specialty) TextView specialty;
+    private Unbinder unbinder;
 
     @Override
     public void onAttach(Context context) {
@@ -41,19 +52,13 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
-        if (imageLoader == null)
-            imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) view
-                .findViewById(R.id.thumbnail);
-        // Пока не удалось загрузить фотографию работника - черный квадрат
-        thumbNail.setDefaultImageResId(R.drawable.empty_image);
-        thumbNail.setErrorImageResId(R.drawable.empty_image);
-        TextView f_name = (TextView) view.findViewById(R.id.f_name);
-        TextView l_name = (TextView) view.findViewById(R.id.l_name);
-        TextView birthday = (TextView) view.findViewById(R.id.birthday);
-        TextView age = (TextView) view.findViewById(R.id.age);
-        TextView specialty = (TextView) view.findViewById(R.id.specialty);
-        thumbNail.setImageUrl(person.getAvatr_url(), imageLoader);
+        unbinder = ButterKnife.bind(this, view);
+        Picasso.with(listener)
+                .load(person.getAvatr_url())
+                .placeholder(R.drawable.empty_image)
+                .error(R.drawable.empty_image)
+                .into(thumbnail);
+
         f_name.setText(person.getF_name());
         l_name.setText(person.getL_name());
         if (person.getAge() != 0) {
@@ -82,6 +87,12 @@ public class DetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     public Person getPerson() {

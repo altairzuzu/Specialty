@@ -6,7 +6,9 @@ import java.util.ArrayList;
  * Работник
  */
 public class Person {
-    private String f_name, l_name, avatr_url;
+    private String f_name;
+    private String l_name;
+    private String avatr_url;
     private String birthday;
     private int age = 0;
     private ArrayList<Specialty> specialty;

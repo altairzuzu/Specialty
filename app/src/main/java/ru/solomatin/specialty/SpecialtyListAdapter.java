@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ru.solomatin.specialty.Model.Specialty;
 
 /**
@@ -23,9 +25,19 @@ public class SpecialtyListAdapter extends BaseAdapter {
     public SpecialtyListAdapter(Activity activity, List<Specialty> specialtyItems) {
         this.activity = activity;
         this.specialtyItems = specialtyItems;
+        this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    @Override
+    static class ViewHolder {
+        @BindView(R.id.name) TextView name;
+//        @BindView(R.id.specialty_id) TextView specialty_id;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
+    }
+
+        @Override
     public int getCount() {
         return specialtyItems.size();
     }
@@ -42,19 +54,19 @@ public class SpecialtyListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
 
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.list_specialty_row, null);
-
-        //TextView id = (TextView) convertView.findViewById(R.id.specialty_id);
-        TextView name = (TextView) convertView.findViewById(R.id.name);
+        if (convertView != null) {
+            holder = (ViewHolder) convertView.getTag();
+        } else {
+            convertView = inflater.inflate(R.layout.list_specialty_row, parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        }
 
         Specialty m = specialtyItems.get(position);
         String nameStr = String.valueOf(m.getSpecialty_id())+" "+m.getName();
-        name.setText(nameStr);
+        holder.name.setText(nameStr);
 
         return convertView;
     }

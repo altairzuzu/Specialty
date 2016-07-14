@@ -6,13 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ru.solomatin.specialty.Model.Person;
 
 /**
@@ -22,11 +24,22 @@ public class PersonListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Person> personItems;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public PersonListAdapter(Activity activity, List<Person> personItems) {
         this.activity = activity;
         this.personItems = personItems;
+        this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    static class ViewHolder {
+        @BindView(R.id.f_name) TextView f_name;
+        @BindView(R.id.l_name) TextView l_name;
+        @BindView(R.id.age) TextView age;
+        @BindView(R.id.thumbnail) ImageView thumbnail;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     @Override
@@ -46,33 +59,27 @@ public class PersonListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.list_person_row, null);
-        if (imageLoader == null)
-            imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) convertView
-                .findViewById(R.id.thumbnail);
-        // Пока не удалось загрузить фотографию работника - черный квадрат
-        thumbNail.setDefaultImageResId(R.drawable.empty_image);
-        thumbNail.setErrorImageResId(R.drawable.empty_image);
-        TextView f_name = (TextView) convertView.findViewById(R.id.f_name);
-        TextView l_name = (TextView) convertView.findViewById(R.id.l_name);
-        TextView age = (TextView) convertView.findViewById(R.id.age);
-
-        Person p = personItems.get(position);
-        thumbNail.setImageUrl(p.getAvatr_url(), imageLoader);
-        f_name.setText(p.getF_name());
-        l_name.setText(p.getL_name());
-        if (p.getAge() != 0) {
-            age.setText(String.valueOf(p.getAge()));
+        ViewHolder holder;
+        if (convertView != null) {
+            holder = (ViewHolder) convertView.getTag();
         } else {
-            age.setText("-");
+            convertView = inflater.inflate(R.layout.list_person_row, parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
         }
-
+        Person p = personItems.get(position);
+        Picasso.with(activity)
+                .load(p.getAvatr_url())
+                .placeholder(R.drawable.empty_image)
+                .error(R.drawable.empty_image)
+                .into(holder.thumbnail);
+        holder.f_name.setText(p.getF_name());
+        holder.l_name.setText(p.getL_name());
+        if (p.getAge() != 0) {
+            holder.age.setText(String.valueOf(p.getAge()));
+        } else {
+            holder.age.setText("-");
+        }
         return convertView;
     }
 

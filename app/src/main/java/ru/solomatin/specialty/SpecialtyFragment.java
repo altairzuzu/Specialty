@@ -19,8 +19,8 @@ public class SpecialtyFragment extends ListFragment {
     public static final String TAG = "SpecialtyFragment";
     private SpecialtyListAdapter adapter;
     private MainActivity listener;
-    private List<Specialty> specialtyList;
     private List<Person> personList;
+    private List<Specialty> specialtyList;
 
     @Override
     public void onAttach(Context context) {
@@ -31,6 +31,7 @@ public class SpecialtyFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // При удалении MainActivity - отцепляем фрагмент и оставляем в памяти
         setRetainInstance(true);
     }
 
@@ -55,12 +56,8 @@ public class SpecialtyFragment extends ListFragment {
         listener.changeFragment(position);
     }
 
-    public List<Specialty> getSpecialtyList() {
-        return specialtyList;
-    }
-
-    public void setSpecialtyList(List<Specialty> specialtyList) {
-        this.specialtyList = specialtyList;
+    public void notifyRefresh() {
+        adapter.notifyDataSetChanged();
     }
 
     public List<Person> getPersonList() {
@@ -71,9 +68,11 @@ public class SpecialtyFragment extends ListFragment {
         this.personList = personList;
     }
 
-    public void notifyRefresh() {
-        adapter.notifyDataSetChanged();
+    public List<Specialty> getSpecialtyList() {
+        return specialtyList;
     }
 
-
+    public void setSpecialtyList(List<Specialty> specialtyList) {
+        this.specialtyList = specialtyList;
+    }
 }

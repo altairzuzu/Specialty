@@ -6,6 +6,6 @@
     <string name="age_label">Возраст</string>
     <string name="birthday_label">Дата рождения</string>
     <string name="specialty_label">Специальность</string>
-    <string name="no_connection_message">Нет соединения</string>
+    <string name="no_connection_message">Ошибка загрузки</string>
     <string name="loading">Загрузка&#8230;</string>
 </resources>
