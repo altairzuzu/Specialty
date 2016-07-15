@@ -20,6 +20,9 @@ import ru.solomatin.specialty.Model.PersonDeserializer;
 import ru.solomatin.specialty.Network.NetworkApi;
 import rx.Observable;
 
+/**
+ * Модуль предоставления сетевых зависимостей
+ */
 @Module
 public class NetworkModule {
 
@@ -48,20 +51,20 @@ public class NetworkModule {
     @Provides
     @Singleton
     OkHttpClient provideOkHttpClient(Cache cache) {
-        OkHttpClient client = new OkHttpClient();
-        //client.setCache(cache);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cache(cache)
+                .build();
         return client;
     }
 
     @Provides
     @Singleton
     Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .client(okHttpClient)
                 .build();
         return retrofit;
     }

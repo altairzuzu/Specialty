@@ -14,13 +14,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import javax.inject.Inject;
-
 public class MainActivity extends AppCompatActivity implements
         FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-//    private static final String EXTRA_RX = "EXTRA_RX";
     private ProgressDialog pDialog;
     private SpecialtyFragment specialtyFragment;
     public List<Person> personList = new ArrayList<>();
@@ -31,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         presenter = new Presenter(this);
 
         // Отслеживаем изменения стэка возврата
@@ -51,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements
             personList = specialtyFragment.getPersonList();
             specialtyList = specialtyFragment.getSpecialtyList();
         }
-        //presenter.loadRxData();
     }
 
     @Override
@@ -98,12 +93,6 @@ public class MainActivity extends AppCompatActivity implements
                 .show();
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putBoolean(EXTRA_RX, rxCallInWorks);
-//    }
-
     public void changeFragment(int position) {
         FragmentManager fm = getSupportFragmentManager();
         Fragment frag = fm.findFragmentById(R.id.content_frame);
@@ -148,9 +137,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onDestroy() {
         super.onDestroy();
         hidePDialog();
-//        // Сохраняем во фрагменте списки Спец-тей и Работников
-//        specialtyFragment.setSpecialtyList(specialtyList);
-//        specialtyFragment.setPersonList(personList);
     }
 
     private void hidePDialog() {

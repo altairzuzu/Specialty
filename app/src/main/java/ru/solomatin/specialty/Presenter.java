@@ -23,7 +23,6 @@ public class Presenter {
     @Inject NetworkApi networkService;
     @Inject LruCache<Class<?>, Observable<?>> cacheObservables;
 
-//    @Inject
     public Presenter(MainActivity view){
         this.view = view;
         ((RxApplication) view.getApplication()).getNetworkComponent().inject(this);
@@ -53,23 +52,28 @@ public class Presenter {
         });
     }
 
+    /**
+     * Отписывает от событий Observable
+     */
     public void rxUnSubscribe(){
         if(subscription!=null && !subscription.isUnsubscribed())
             subscription.unsubscribe();
     }
 
     /**
-     * Возвращает кэшированный Observable или подготавлвиает новый
+     * Возвращает кэшированный Observable или подготавливает новый
      *
      * @param unPreparedObservable Неподготовленный Observable
      * @param clazz Используется, как ключ в LruCache
      * @return Observable, подготовленная для подписки
      */
     public Observable<?> getPreparedObservable(Observable<?> unPreparedObservable, Class<?> clazz) {
+        // Ищем уже готовый Observable в кэше
         Observable<?> preparedObservable = cacheObservables.get(clazz);
         if (preparedObservable != null) {
             return preparedObservable;
         }
+        // Если в кэше нет, значит, подготавливаем новый
         preparedObservable = unPreparedObservable
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

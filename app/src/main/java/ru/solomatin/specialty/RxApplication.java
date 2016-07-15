@@ -8,7 +8,7 @@ import ru.solomatin.specialty.Dependencies.NetworkComponent;
 import ru.solomatin.specialty.Dependencies.NetworkModule;
 
 /**
- * Created by cteegarden on 1/26/16.
+ * Application. Инициализируем и храним здесь DaggerNetworkComponent
  */
 public class RxApplication extends Application {
 
@@ -19,8 +19,7 @@ public class RxApplication extends Application {
         super.onCreate();
         networkComponent = DaggerNetworkComponent.builder()
                 .appModule(new AppModule(this))
-                //.networkModule(new NetworkModule("http://65apps.com"))
-                .networkModule(new NetworkModule("http://192.168.1.33:3000"))
+                .networkModule(new NetworkModule("http://65apps.com"))
                 .build();
     }
 

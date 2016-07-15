@@ -8,7 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Created by altair on 14.07.2016.
+ * Модуль предоставления Application
  */
 @Module
 public class AppModule {

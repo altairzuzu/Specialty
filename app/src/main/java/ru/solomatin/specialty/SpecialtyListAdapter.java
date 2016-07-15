@@ -30,14 +30,12 @@ public class SpecialtyListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         @BindView(R.id.name) TextView name;
-//        @BindView(R.id.specialty_id) TextView specialty_id;
-
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
     }
 
-        @Override
+    @Override
     public int getCount() {
         return specialtyItems.size();
     }
@@ -55,7 +53,6 @@ public class SpecialtyListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-
         if (convertView != null) {
             holder = (ViewHolder) convertView.getTag();
         } else {
@@ -63,11 +60,9 @@ public class SpecialtyListAdapter extends BaseAdapter {
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
-
         Specialty m = specialtyItems.get(position);
         String nameStr = String.valueOf(m.getSpecialty_id())+" "+m.getName();
         holder.name.setText(nameStr);
-
         return convertView;
     }
 

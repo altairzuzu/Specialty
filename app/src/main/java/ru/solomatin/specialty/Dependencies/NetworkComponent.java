@@ -12,8 +12,6 @@ import ru.solomatin.specialty.Presenter;
 @Singleton
 @Component (modules = { AppModule.class, NetworkModule.class})
 public interface NetworkComponent {
-    void inject (MainActivity activity);
+    //void inject (MainActivity activity);
     void inject (Presenter presenter);
-    // void inject(MyFragment fragment);
-    // void inject(MyService service);
 }

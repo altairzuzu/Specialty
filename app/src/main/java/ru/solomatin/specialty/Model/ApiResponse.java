@@ -12,7 +12,4 @@ public class ApiResponse {
         return response;
     }
 
-    public void setResponse(List<Person> response) {
-        this.response = response;
-    }
 }
