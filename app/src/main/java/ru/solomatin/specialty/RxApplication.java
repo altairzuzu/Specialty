@@ -19,7 +19,7 @@ public class RxApplication extends Application {
         super.onCreate();
         networkComponent = DaggerNetworkComponent.builder()
                 .appModule(new AppModule(this))
-                .networkModule(new NetworkModule("http://65apps.com"))
+                .networkModule(new NetworkModule("http://127.0.0.1"))
                 .build();
     }
 
