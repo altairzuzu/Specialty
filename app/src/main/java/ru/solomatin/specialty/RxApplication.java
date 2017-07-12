@@ -14,6 +14,9 @@ public class RxApplication extends Application {
 
     private NetworkComponent networkComponent;
 
+
+    // todo test
+
     @Override
     public void onCreate() {
         super.onCreate();
